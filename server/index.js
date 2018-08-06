@@ -1,22 +1,8 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer } = require('apollo-server')
 const fetch = require('node-fetch')
+
+const { typeDefs } = require('./typeDefs')
 const { getQueryParams } = require('./api')
-
-const typeDefs = gql`
-  type Query {
-    characters: Characters
-  }
-
-  type Characters {
-    character: Character
-  }
-
-  type Character {
-    id: Int
-    name: String
-    thumbnail: String
-  }
-`
 
 const resolvers = {
   Query: {
@@ -38,11 +24,14 @@ const resolvers = {
   }
 }
 
-const server = new ApolloServer({ typeDefs, resolvers })
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  engine: {
+    apiKey: "service:Aranor28-2972:lkwQGRZoiGZAMOcqIP7Olw"
+  },
+})
 
 server.listen().then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`)
-  fetch(`http://gateway.marvel.com/v1/public/characters${getQueryParams()}`)
-    .then(res => res.json())
-    .then(res => console.log('ehe', res.data.results[0]))
 })
